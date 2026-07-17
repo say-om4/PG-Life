@@ -50,6 +50,7 @@ INSERT INTO `bookings` (`id`, `user_id`, `pg_id`, `booking_date`, `status`) VALU
 
 CREATE TABLE `pgs` (
   `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `name` varchar(100) NOT NULL,
   `city` varchar(100) NOT NULL,
   `address` text NOT NULL,
@@ -62,8 +63,14 @@ CREATE TABLE `pgs` (
   `bathroom` varchar(50) DEFAULT NULL,
   `parking` tinyint(1) DEFAULT 0,
   `power_backup` tinyint(1) DEFAULT 1,
+  `independent` tinyint(1) DEFAULT 0,
   `image` varchar(255) DEFAULT NULL,
   `description` text DEFAULT NULL,
+  `status` enum('Vacant','Full') NOT NULL DEFAULT 'Vacant',
+  `property_type` enum('PG','Room','Apartment','Hostel') NOT NULL DEFAULT 'PG',
+  `rating_setting` enum('reviews','admin') NOT NULL DEFAULT 'reviews',
+  `contact_display` enum('both','email','phone') NOT NULL DEFAULT 'both',
+  `phone2` varchar(15) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -71,11 +78,11 @@ CREATE TABLE `pgs` (
 -- Dumping data for table `pgs`
 --
 
-INSERT INTO `pgs` (`id`, `name`, `city`, `address`, `price`, `rating`, `room_type`, `gender`, `food`, `wifi`, `bathroom`, `parking`, `power_backup`, `image`, `description`, `created_at`) VALUES
-(1, 'Sunrise PG', 'Delhi', 'Laxmi Nagar, Delhi', 7500.00, 4.8, 'Single Sharing', 'Boys', 1, 1, 'Attached', 1, 1, 'pg1.jpg', 'A premium boys PG with modern rooms, healthy food, high-speed WiFi and excellent security.', '2026-07-11 13:25:36'),
-(2, 'Royal Stay PG', 'Bangalore', 'BTM Layout, Bangalore', 6000.00, 4.7, 'Double Sharing', 'Girls', 1, 0, 'Attached', 0, 1, 'pg2.jpg', 'Comfortable girls PG with spacious rooms, daily housekeeping and delicious meals.', '2026-07-11 13:25:36'),
-(3, 'Green Nest PG', 'Pune', 'Hinjewadi, Pune', 7200.00, 4.7, 'Triple Sharing', 'Unisex', 1, 1, 'Common', 1, 1, 'pg3.jpg', 'Affordable unisex PG near IT park with modern facilities and a friendly environment.', '2026-07-11 13:25:36'),
-(5, 'Apna pg', 'Dehradun', 'premnagar kehrigaon', 7000.00, 4.9, 'Double Sharing', 'Boys', 1, 1, 'Attached', 1, 1, '1783869451_pg4.jpg.jpg', 'free wifi electricity include parking ', '2026-07-12 15:17:31');
+INSERT INTO `pgs` (`id`, `user_id`, `name`, `city`, `address`, `price`, `rating`, `room_type`, `gender`, `food`, `wifi`, `bathroom`, `parking`, `power_backup`, `image`, `description`, `status`, `property_type`, `created_at`) VALUES
+(1, NULL, 'Sunrise PG', 'Delhi', 'Laxmi Nagar, Delhi', 7500.00, 4.8, 'Single Sharing', 'Boys', 1, 1, 'Attached', 1, 1, 'pg1.jpg', 'A premium boys PG with modern rooms, healthy food, high-speed WiFi and excellent security.', 'Vacant', 'PG', '2026-07-11 13:25:36'),
+(2, NULL, 'Royal Stay PG', 'Bangalore', 'BTM Layout, Bangalore', 6000.00, 4.7, 'Double Sharing', 'Girls', 1, 0, 'Attached', 0, 1, 'pg2.jpg', 'Comfortable girls PG with spacious rooms, daily housekeeping and delicious meals.', 'Vacant', 'PG', '2026-07-11 13:25:36'),
+(3, NULL, 'Green Nest PG', 'Pune', 'Hinjewadi, Pune', 7200.00, 4.7, 'Triple Sharing', 'Unisex', 1, 1, 'Common', 1, 1, 'pg3.jpg', 'Affordable unisex PG near IT park with modern facilities and a friendly environment.', 'Vacant', 'PG', '2026-07-11 13:25:36'),
+(5, NULL, 'Apna pg', 'Dehradun', 'premnagar kehrigaon', 7000.00, 4.9, 'Double Sharing', 'Boys', 1, 1, 'Attached', 1, 1, '1783869451_pg4.jpg.jpg', 'free wifi electricity include parking ', 'Vacant', 'PG', '2026-07-12 15:17:31');
 
 -- --------------------------------------------------------
 
@@ -192,6 +199,46 @@ ALTER TABLE `bookings`
 ALTER TABLE `wishlist`
   ADD CONSTRAINT `wishlist_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`pg_id`) REFERENCES `pgs` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `pgs`
+--
+ALTER TABLE `pgs`
+  ADD CONSTRAINT `pgs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Table structure for table `reviews`
+--
+CREATE TABLE `reviews` (
+  `id` int(11) NOT NULL,
+  `pg_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` int(1) NOT NULL,
+  `review_text` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_user_pg_review` (`user_id`,`pg_id`),
+  ADD KEY `pg_id` (`pg_id`);
+
+--
+-- AUTO_INCREMENT for table `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`pg_id`) REFERENCES `pgs` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

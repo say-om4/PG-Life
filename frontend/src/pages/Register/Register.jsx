@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../../services/api";
 import "./Register.css";
 
@@ -13,6 +14,8 @@ function Register() {
     phone: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -100,16 +103,24 @@ function Register() {
                   />
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-3 position-relative">
                   <label className="form-label">Password</label>
                   <input
-                    type="password"
-                    className="form-control"
+                    type={showPassword ? "text" : "password"}
+                    className="form-control pe-5"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     required
                   />
+                  <button
+                    type="button"
+                    className="password-toggle-btn btn border-0 p-0 text-muted"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label="Toggle Password Visibility"
+                  >
+                    {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                  </button>
                 </div>
 
                 <button

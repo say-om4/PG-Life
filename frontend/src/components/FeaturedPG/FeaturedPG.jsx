@@ -57,88 +57,105 @@ function FeaturedPG() {
   }, []);
 
   return (
-    <section className="featured-pg">
+    <section className="featured-pg py-5">
       <div className="container">
 
         <div className="text-center mb-5">
-          <h2>Featured PGs</h2>
-          <p>Explore our most popular verified PG accommodations.</p>
+          <h2 className="fw-bold">Featured Listings</h2>
+          <p className="text-muted">Explore our most popular vacant rooms, PGs, and apartments.</p>
         </div>
 
         <div className="row g-4">
 
-          {pgs.map((pg) => (
+          {pgs.slice(0, 6).map((pg) => {
+            const isFull = pg.status === "Full";
+            return (
+              <div className="col-lg-4 col-md-6" key={pg.id}>
 
-            <div className="col-lg-4 col-md-6" key={pg.id}>
+                <div className="pg-card card border-0 shadow-sm h-100 rounded-4 overflow-hidden position-relative">
 
-              <div className="pg-card">
+                  <div className="pg-image position-relative">
 
-                <div className="pg-image">
+                    <img
+                      src={
+                        imageMap[pg.image]
+                          ? imageMap[pg.image]
+                          : `http://localhost/PG-Life/backend/uploads/${pg.image}`
+                      }
+                      alt={pg.name}
+                      style={{ height: "220px", objectFit: "cover", width: "100%" }}
+                    />
 
-                  <img
-                    src={
-                      imageMap[pg.image]
-                        ? imageMap[pg.image]
-                        : `http://localhost/PG-Life/backend/uploads/${pg.image}`
-                    }
-                    alt={pg.name}
-                  />
-
-                  <span className="rating-badge">
-                    ⭐ {pg.rating}
-                  </span>
-
-                  <button
-                    className="wishlist-btn"
-                    onClick={() => handleWishlist(pg.id)}
-                  >
-                    ❤️
-                  </button>
-
-                </div>
-
-                <div className="pg-content">
-
-                  <h4>{pg.name}</h4>
-
-                  <p>
-                    <FaMapMarkerAlt /> {pg.city}
-                  </p>
-
-                  <h5>₹{pg.price}/Month</h5>
-
-                  <div className="pg-features">
-
-                    <span>{pg.room_type}</span>
-
-                    <span>
-                      <FaWifi /> WiFi
+                    <span className="rating-badge position-absolute top-0 start-0 m-3 badge bg-warning text-dark fw-bold">
+                      ⭐ {pg.rating || "5.0"}
                     </span>
 
-                    <span>
-                      <FaUtensils /> Food
+                    <span className={`position-absolute top-0 end-0 m-3 badge ${isFull ? 'bg-danger' : 'bg-success'} py-2 px-3 rounded-pill shadow`}>
+                      {pg.status || "Vacant"}
                     </span>
 
-                    <span>
-                      <MdBathroom /> {pg.bathroom}
-                    </span>
+                    <button
+                      className="wishlist-btn position-absolute bottom-0 end-0 m-3 btn btn-light rounded-circle shadow-sm"
+                      style={{ width: "40px", height: "40px", padding: 0 }}
+                      onClick={() => handleWishlist(pg.id)}
+                    >
+                      ❤️
+                    </button>
 
                   </div>
 
-                  <Link
-                    to={`/pg-details/${pg.id}`}
-                    className="btn btn-primary w-100 mt-3"
-                  >
-                    View Details
-                  </Link>
+                  <div className="pg-content p-4">
+
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <span className="badge bg-secondary-subtle text-secondary text-uppercase small">
+                        {pg.property_type || "PG"}
+                      </span>
+                    </div>
+
+                    <h4 className="fw-bold mb-1 text-dark">{pg.name}</h4>
+
+                    <p className="text-muted small mb-3">
+                      <FaMapMarkerAlt /> {pg.city}
+                    </p>
+
+                    <h5 className="fw-bold text-primary mb-3">₹{pg.price} <span className="small text-muted fw-normal">/ Month</span></h5>
+
+                    <div className="pg-features d-flex flex-wrap gap-2 mb-3">
+
+                      <span className="badge bg-light text-dark border font-weight-normal">{pg.room_type}</span>
+
+                      {pg.wifi == 1 && (
+                        <span className="badge bg-light text-dark border">
+                          <FaWifi /> WiFi
+                        </span>
+                      )}
+
+                      {pg.food == 1 && (
+                        <span className="badge bg-light text-dark border">
+                          <FaUtensils /> Food
+                        </span>
+                      )}
+
+                      <span className="badge bg-light text-dark border">
+                        <MdBathroom /> {pg.bathroom}
+                      </span>
+
+                    </div>
+
+                    <Link
+                      to={`/pg-details/${pg.id}`}
+                      className="btn btn-primary btn-sm w-100 py-2 rounded-3 fw-semibold mt-2"
+                    >
+                      View Details
+                    </Link>
+
+                  </div>
 
                 </div>
 
               </div>
-
-            </div>
-
-          ))}
+            );
+          })}
 
         </div>
 

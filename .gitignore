@@ -14,3 +14,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Database Configuration
+backend/config/database.php
+
+# User Uploads
+backend/uploads/*
+!backend/uploads/index.php

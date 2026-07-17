@@ -11,8 +11,14 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     phone VARCHAR(15) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    role ENUM('user','admin') NOT NULL DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Seed Admin user (Omjee with SayOm@357)
+INSERT INTO users (id, full_name, email, phone, password, role) VALUES 
+(2, 'Om', 'omjeexig@gmail.com', '8679389489', '$2y$10$x9RZkbZFWcHAlB6xkEbOfOU6R.T2j8unkZhLIbCTeWhzrWYYqXfUC', 'admin')
+ON DUPLICATE KEY UPDATE role='admin';
 
 -- ===========================
 -- PGS TABLE
@@ -20,6 +26,7 @@ CREATE TABLE users (
 
 CREATE TABLE pgs (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NULL DEFAULT NULL,
     name VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     address TEXT NOT NULL,
@@ -32,9 +39,14 @@ CREATE TABLE pgs (
     bathroom VARCHAR(50),
     parking BOOLEAN DEFAULT FALSE,
     power_backup BOOLEAN DEFAULT TRUE,
+    independent BOOLEAN DEFAULT FALSE,
     image VARCHAR(255),
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status ENUM('Vacant', 'Full') NOT NULL DEFAULT 'Vacant',
+    property_type ENUM('PG', 'Room', 'Apartment', 'Hostel') NOT NULL DEFAULT 'PG',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- ===========================

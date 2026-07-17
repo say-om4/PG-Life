@@ -16,15 +16,18 @@ function Contact() {
 
             <input
               type="text"
+              className="form-control"
               placeholder="Your Name"
             />
 
             <input
               type="email"
+              className="form-control"
               placeholder="Your Email"
             />
 
             <textarea
+              className="form-control"
               rows="5"
               placeholder="Your Message"
             ></textarea>
